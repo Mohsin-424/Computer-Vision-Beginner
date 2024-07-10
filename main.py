@@ -2,6 +2,8 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 import cvzone
+import numpy as np
+
 
 cap = cv2.VideoCapture("bicep.mp4")
 
