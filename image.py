@@ -23,7 +23,8 @@ for category in categories:
         img_path = os.path.join(input_dir,category,file)
         img = imread(img_path)
         img = resize(img,(15,15))
-        data.append(img.flattened)
+        data.append(img.flatted())
+        
         
         
         
