@@ -11,21 +11,32 @@ from skimage.transform import resize
 
 
 
-# Prepeare Data(Data preprocessing)
-input_dir = 'G:\Computer Vision\Computer-Vision-Beginner\Image-Classification\clf-data'
+# 1. Prepeare Data(Data preprocessing)
+
+input_dir = 'G:\Computer Vision\Computer-Vision-Beginner\Image-Classification\clf-data' # change data path accordingly
 categories = ['empty','non_empty']
 
+
+
+
+# Initializing Data Containers for Iamges
 data = []
 labels= []
 
-for category in categories:
+# Loading and Processing Images
+for category_idex ,category in enumerate(categories):
     for file in os.listdir(os.path.join(input_dir,category)):
         img_path = os.path.join(input_dir,category,file)
         img = imread(img_path)
         img = resize(img,(15,15))
         data.append(img.flatted())
+        labels.append(category_idex)
+
+
+# Converting Lists to Arrays
+data = np.asarray(data)
+labels = np.asarray(labels) 
         
-        
-        
+
         
 
