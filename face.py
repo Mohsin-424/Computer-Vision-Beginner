@@ -1,7 +1,9 @@
 import mediapipe as mp
+
 import cv2
 
 # Read Image
+
 # img_path = './data/testImg.png'
 img_path = './data/testNoFace.jpg'
 
