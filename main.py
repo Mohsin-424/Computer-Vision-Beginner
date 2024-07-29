@@ -1,33 +1,29 @@
 import cv2
-from PIL import Image
+import easyocr
+import matplotlib.pyplot as plt
+import numpy as np
 
-from util import get_limits  # Ensure the function name matches
+# read image
+image_path = '/home/phillip/Desktop/todays_tutorial/30_text_detection_easyocr/code/data/test2.png'
 
-yellow = [0, 255, 255]  # Yellow in BGR colorspace
-cap = cv2.VideoCapture(0)
+img = cv2.imread(image_path)
 
-while True:
-    ret, frame = cap.read()
+# instance text detector
+reader = easyocr.Reader(['en'], gpu=False)
 
-    hsvImage = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+# detect text on image
+text_ = reader.readtext(img)
 
-    lowerLimit, upperLimit = get_limits(color=yellow)
+threshold = 0.25
+# draw bbox and text
+for t_, t in enumerate(text_):
+    print(t)
 
-    mask = cv2.inRange(hsvImage, lowerLimit, upperLimit)
+    bbox, text, score = t
 
-    mask_ = Image.fromarray(mask)
+    if score > threshold:
+        cv2.rectangle(img, bbox[0], bbox[2], (0, 255, 0), 5)
+        cv2.putText(img, text, bbox[0], cv2.FONT_HERSHEY_COMPLEX, 0.65, (255, 0, 0), 2)
 
-    bbox = mask_.getbbox()
-
-    if bbox is not None:
-        x1, y1, x2, y2 = bbox
-
-        frame = cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 5)
-
-    cv2.imshow('frame', frame)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+plt.show()
