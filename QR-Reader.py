@@ -1,6 +1,5 @@
 # Imports to add in Python
 
-import numpy as np
 import cv2
 import pyzbar # library to read qr codes and bar codes
 import matplotlib as plt
@@ -19,6 +18,7 @@ for j in sorted( os.listdir ( input_dir )):
     qr_info = decode(img)
     
     print(qr_info)
+    
     
     
     
