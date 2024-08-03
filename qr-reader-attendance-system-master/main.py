@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-input_dir = '/home/phillip/Desktop/todays_tutorial/10_qr_code_reader/code/data'
+input_dir = r'G:\Computer Vision\PortFolio\qr-reader-attendance-system-master\img-1.jpeg'
 
 for j in sorted(os.listdir(input_dir)):
     img = cv2.imread(os.path.join(input_dir, j))
