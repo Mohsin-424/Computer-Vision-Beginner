@@ -1,43 +1,58 @@
-import numpy as np
+import os
+import datetime
+import time
+
 import cv2
 from pyzbar.pyzbar import decode
+import numpy as np
 
-cap = cv2.VideoCapture(0)
+# Load authorized users
+with open('./whitelist.txt', 'r') as f:
+    authorized_users = [l.strip() for l in f.readlines() if len(l) > 2]
+
+log_path = './log.txt'
+
+# Open the camera
+cap = cv2.VideoCapture(0)  # Change index if needed
+
+if not cap.isOpened():
+    print("Error: Could not open camera.")
+    exit()
+
+most_recent_access = {}
+time_between_logs_th = 5
 
 while True:
     ret, frame = cap.read()
-    
+
     if not ret:
-        print("Failed to capture image")
+        print("Error: Failed to capture image.")
         break
-    
+
     qr_info = decode(frame)
-    
-    if len(qr_info) > 0:
-        for qr in qr_info:
-            data = qr.data.decode('utf-8')  # Decode the data from bytes to string
-            rect = qr.rect  # Rectangle bounding the QR code
-            polygon = qr.polygon  # Polygon points for the QR code
-            
-            # Display the decoded text above the QR code
-            cv2.putText(frame, data, (rect.left, rect.top - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-            # Draw a rectangle around the QR code
-            frame = cv2.rectangle(frame, (rect.left, rect.top), (rect.left + rect.width, rect.top + rect.height), (0, 255, 0), 5)
-            
-            # Draw the polygon around the QR code
-            if len(polygon) > 0:
-                pts = np.array(polygon, dtype=np.int32)  # Convert polygon points to integer array
-                pts = pts.reshape((-1, 1, 2))  # Reshape points for cv2.polylines
-                frame = cv2.polylines(frame, [pts], True, (255, 0, 0), 5)  # Color: Red, Thickness: 5
+    if qr_info:
+        qr = qr_info[0]
+        data = qr.data.decode()
+        rect = qr.rect
+        polygon = qr.polygon
 
-    # Resize the frame
-    frame_resized = cv2.resize(frame, (800, 600))  # Adjust the width and height as needed
-    
-    cv2.imshow('webcam', frame_resized)
-     
+        if data in authorized_users:
+            cv2.putText(frame, 'ACCESS GRANTED', (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+            if data not in most_recent_access.keys() or time.time() - most_recent_access[data] > time_between_logs_th:
+                most_recent_access[data] = time.time()
+                with open(log_path, 'a') as f:
+                    f.write('{},{}\n'.format(data, datetime.datetime.now()))
+        else:
+            cv2.putText(frame, 'ACCESS DENIED', (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
+
+        frame = cv2.rectangle(frame, (rect.left, rect.top), (rect.left + rect.width, rect.top + rect.height), (0, 255, 0), 5)
+        frame = cv2.polylines(frame, [np.array(polygon)], True, (255, 0, 0), 5)
+
+    cv2.imshow('webcam', frame)
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    
+
 cap.release()
 cv2.destroyAllWindows()
