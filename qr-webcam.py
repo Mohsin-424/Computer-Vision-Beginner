@@ -1,8 +1,11 @@
 import numpy as np
 import cv2
 from pyzbar.pyzbar import decode
+import matplotlib.pyplot as plt
+
 
 cap = cv2.VideoCapture(0)
+
 
 while True:
     ret, frame = cap.read()
@@ -18,6 +21,8 @@ while True:
             data = qr.data.decode('utf-8')  # Decode the data from bytes to string
             rect = qr.rect  # Rectangle bounding the QR code
             polygon = qr.polygon  # Polygon points for the QR code
+            
+            cv2.putText( frame , data.encode() , (rect.left, rect.top - 10), cv2.FONT_HERSHEY_SIMPLEX , 1 ,(0 , 255 , 0) , 2)
 
             # Draw a rectangle around the QR code
             frame = cv2.rectangle(frame, (rect.left, rect.top), (rect.left + rect.width, rect.top + rect.height), (0, 255, 0), 5)
