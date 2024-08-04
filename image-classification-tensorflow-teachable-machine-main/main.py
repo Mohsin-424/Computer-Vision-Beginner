@@ -27,7 +27,7 @@ data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 predictions = []
 labels = []
-root_dir = '/media/veracrypt2/computer_vision/44_yolov8_image_classification_custom_data/code/data/weather_dataset/val'
+root_dir = r'G:\Computer Vision\PortFolio\image-classification-tensorflow-teachable-machine-main'
 for dir_ in os.listdir(root_dir):
     for j in os.listdir(os.path.join(root_dir, dir_)):
         image_path = os.path.join(root_dir, dir_, j)
