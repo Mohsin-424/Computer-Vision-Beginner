@@ -1,0 +1,21 @@
+<h4><strong>Circle Detection with Hough Cirlces</strong></h4><blockquote><p><em>cv2.HoughCircles(image, method, dp, MinDist, param1, param2, minRadius, MaxRadius)</em></p></blockquote><figure><img src="https://udemy-images.s3.amazonaws.com:443/redactor/2016-10-11_16-53-00-c8397c70c340839ce7597e5ab514e70b/bottlecap.JPG"></figure><ul><li><p><strong>Method </strong>- currently only cv2.HOUGH_GRADIENT available</p></li><li><p><strong>dp </strong>- Inverse ratio of accumulator resolution</p></li><li><p><strong>MinDist </strong>- the minimum distance between the center of detected circles</p></li><li><p><strong>param1 </strong>- Gradient value used in the edge detection</p></li><li><p><strong>param2 </strong>- Accumulator threshold for the HOUGH_GRADIENT method, lower allows more circles to be detected (false positives)</p></li><li><p><strong>minRadius </strong>- limits the smallest circle to this size (via radius)</p></li><li><p><strong>MaxRadius </strong>- similarly sets the limit for the largest circles</p></li></ul><pre class="prettyprint linenums">import cv2
+import numpy as np
+import cv2.cv as cv
+
+image = cv2.imread('images/bottlecaps.jpg')
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+blur = cv2.medianBlur(gray, 5)
+circles = cv2.HoughCircles(blur, cv.CV_HOUGH_GRADIENT, 1.5, 10)
+
+for i in circles[0,:]:
+       # draw the outer circle
+       cv2.circle(image,(i[0], i[1]), i[2], (255, 0, 0), 2)
+      
+       # draw the center of the circle
+       cv2.circle(image, (i[0], i[1]), 2, (0, 255, 0), 5)
+
+cv2.imshow('detected circles', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+</pre>
